@@ -28,10 +28,11 @@ const authSlice = createSlice({
         })
 
         builder.addCase(login.fulfilled, (state, action) => {
+            state.user = action.payload[0];
             state.isLoading = false;
             state.isAuth = true;
             state.error = '';
-            state.user = action.payload[0];
+
 
             localStorage.setItem('auth', 'true');
             localStorage.setItem('user', JSON.stringify(action.payload[0]));

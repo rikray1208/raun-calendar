@@ -1,9 +1,9 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Button, DatePicker, Form, Input, Select} from "antd";
 import {IUser} from "../Models/IUser";
-import {IEvent} from "../Models/IEvent";
+import {EStatus, IEvent} from "../Models/IEvent";
 import {useAppSelector} from "../hooks/reduxHooks";
-import {Moment} from "moment";
+import moment, {Moment} from "moment";
 
 interface FormProps {
     guests: IUser[],
@@ -16,7 +16,8 @@ const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
         author: '',
         date: '',
         description: '',
-        guest: ''
+        guest: '',
+        status: EStatus.PROCESSING
     });
     const {user} = useAppSelector((state) => state.Auth);
 
@@ -30,6 +31,10 @@ const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
 
     function submitForm() {
         submit(event)
+    }
+
+    function disabledDate(date: Moment) {
+        return date.format('L') < moment().format('L')
     }
 
     return (
@@ -54,7 +59,7 @@ const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
                 name="data"
                 rules={[{ required: true, message: 'Выберете дату!' }]}
             >
-                <DatePicker onChange={selectDate}/>
+                <DatePicker disabledDate={disabledDate} onChange={selectDate}/>
             </Form.Item>
 
             <Form.Item

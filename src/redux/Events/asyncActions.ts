@@ -9,18 +9,30 @@ export const fetchUsers = createAsyncThunk<IUser[]> ('events/fetchUsers',
         const response = await UserService.getUsers()
 
         return response.data
-    })
-
+})
 
 export const setEvent = createAsyncThunk<IEvent, IEvent>('events/setEvent',
     async (event) => {
         const response = await EventsService.setEvents(event);
 
         return response.data
-    })
+})
 
 export const getEvents = createAsyncThunk<IEvent[], string>('events/getEvent',
     async (username) => {
         const response = await EventsService.getEvents();
         return response.data.filter(el => el.author === username || el.guest === username)
+})
+
+export const changeStatusEvent = createAsyncThunk<IEvent, IEvent>('events/changeStatusEvent',
+    async (event) => {
+        const response = await EventsService.changeStatus(event);
+
+        return response.data;
+})
+
+export const deleteEvent = createAsyncThunk<IEvent, IEvent>('events/deleteEvent',
+    async (event) => {
+            const response = await EventsService.deleteEvent(event);
+            return response.data
     })

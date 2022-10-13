@@ -17,4 +17,17 @@ export default class EventsService {
     static async getEvents(): Promise<AxiosResponse<IEvent[]>> {
         return axios.get(EVENTS_API);
     }
+
+    static async changeStatus(event: IEvent): Promise<AxiosResponse<IEvent>> {
+        const json = JSON.stringify(event);
+        return axios.put(EVENTS_API + `/${event.id}`, json, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    static async deleteEvent(event: IEvent): Promise<AxiosResponse<IEvent>> {
+        return axios.delete(EVENTS_API + `/${event.id}`);
+    }
 }

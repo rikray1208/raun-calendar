@@ -4,6 +4,7 @@ import CalendarComponent from "../components/CalendarComponent";
 import {useActions, useAppSelector} from "../hooks/reduxHooks";
 import EventsForm from "../components/EventsForm";
 import {IEvent} from "../Models/IEvent";
+import EventModal from "../components/EventModal";
 
 
 
@@ -15,7 +16,8 @@ const CalendarPage: FC = () => {
     const {setEvent, getEvents} = useActions()
 
     useEffect(() => {
-        fetchUsers()
+        fetchUsers();
+        getEvents(user.username);
     }, []);
 
     async function submitModal(event: IEvent) {
@@ -23,15 +25,9 @@ const CalendarPage: FC = () => {
         setIsModalOpen(false);
     }
 
-    useEffect(() => {
-        getEvents(user.username);
-
-    }, []);
-    console.log(events)
     return (
         <Layout >
-
-            <CalendarComponent/>
+            <CalendarComponent events={events}/>
             <Row justify='center'>
                 <Button type='default' onClick={() => setIsModalOpen(true)}>Добавить событие</Button>
                 <Modal title='Добавить событие' open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>

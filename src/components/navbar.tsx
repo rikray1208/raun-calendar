@@ -28,6 +28,11 @@ const Navbar: FC = () => {
                             >
                                 Выйти
                             </Menu.Item>
+                            <Menu.Item
+                                key={2}
+                            >
+                                <Link to='/calendar'>Календарь</Link>
+                            </Menu.Item>
                         </Menu>
                     </>
                     :
