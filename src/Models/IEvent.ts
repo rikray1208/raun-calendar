@@ -10,5 +10,5 @@ export interface IEvent {
     date: string;
     description: string;
     status: EStatus;
-    id?: string;
+    id: string;
 }

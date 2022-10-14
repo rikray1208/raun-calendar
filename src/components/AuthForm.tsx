@@ -2,14 +2,12 @@ import { Button, Form, Input } from 'antd';
 import React, {useState} from 'react';
 
 import {useActions, useAppSelector} from "../hooks/reduxHooks";
-import {useNavigate} from "react-router-dom";
 
 const AuthForm: React.FC = () => {
     const { login } = useActions();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const {error, isLoading, user, isAuth} = useAppSelector(state => state.Auth);
-    const navigate = useNavigate()
+    const {error, isLoading} = useAppSelector(state => state.Auth);
 
     const onFinish = () => {
         login({username, password})
@@ -45,7 +43,6 @@ const AuthForm: React.FC = () => {
                 <Button type="primary" htmlType="submit" loading={isLoading}>
                     Submit
                 </Button>
-                {!error && isAuth && <h1>Успешная авторизация</h1>}
             </Form.Item>
         </Form>
     );

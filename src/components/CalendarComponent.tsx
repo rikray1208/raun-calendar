@@ -1,22 +1,29 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
-import {Badge, BadgeProps, Calendar} from "antd";
+import React, {FC, useState} from 'react';
+import {Badge, BadgeProps, Calendar, Space, Typography} from "antd";
 import {Moment} from "moment";
-import {IEvent} from "../Models/IEvent";
+import {EStatus, IEvent} from "../Models/IEvent";
 import EventModal from "./EventModal";
-import {useAppSelector} from "../hooks/reduxHooks";
+import {useActions} from "../hooks/reduxHooks";
+import {BaseType} from "antd/es/typography/Base";
 
+const { Text } = Typography;
 
 interface CalendarProps {
-    events: IEvent[];
+    events: IEvent[],
+    setIsEventModalOpen: (param: boolean) => void
 }
 
-const CalendarComponent: FC<CalendarProps> = ({ events}) => {
+const CalendarComponent: FC<CalendarProps> = ({ events, setIsEventModalOpen}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const eventRef = useRef<IEvent | null>(null);
+    const [selectedEventID, setSelectedEventID] = useState<string>('1');
+    const { setDate } = useActions();
 
-    function openEvent(event: IEvent) {
+    function openEvent(id: string, e?: React.MouseEvent<HTMLDivElement>) {
+        if(e)  {
+            e.stopPropagation()
+        }
         setIsModalOpen(true);
-        eventRef.current = event;
+        setSelectedEventID(id)
     }
 
     const dateCellRender = (value: Moment) => {
@@ -26,20 +33,41 @@ const CalendarComponent: FC<CalendarProps> = ({ events}) => {
             <ul>
                 {eventsList.map(item => (
                     <li key={item.id} style={{listStyleType: "none", display: "flex"}}>
-                        <Badge
-                            status={item.status as BadgeProps['status']}
-                        />
-                        <p style={{marginLeft: 5}} onClick={() => openEvent(item)}>{item.description}</p>
+                        <Space>
+                            <Badge
+                                status={item.status as BadgeProps['status']}
+                            />
+                            {EStatus.SUCCESS === item.status ?
+                                <Text
+                                    type='success'
+                                    onClick={(e) => openEvent(item.id, e)}>
+                                    {item.description}
+                                </Text>
+
+                                :
+                                <Text
+                                    type={ EStatus.CANSEL === item.status ? 'danger' as BaseType : '' as BaseType}
+                                    delete={item.status === EStatus.CANSEL}
+                                    onClick={(e) => openEvent(item.id, e)}>
+                                    {item.description}
+                                </Text>
+                            }
+                        </Space>
                     </li>
                 ))}
             </ul>
         );
     };
 
+    function onSelect(date: Moment) {
+        setIsEventModalOpen(true)
+        setDate(date)
+    }
+
     return (
         <>
-            <EventModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} event={eventRef.current}/>
-            <Calendar dateCellRender={dateCellRender}/>
+            <EventModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} selectedEventID={selectedEventID}/>
+            <Calendar onSelect={onSelect} dateCellRender={dateCellRender}/>
         </>
     );
 };

@@ -5,10 +5,12 @@ import {authActions} from "../redux/Auth/slice";
 import {login} from "../redux/Auth/asyncActions";
 import {EventsSliceActions} from "../redux/Events/slice";
 import {changeStatusEvent, deleteEvent, fetchUsers, getEvents, setEvent} from "../redux/Events/asyncActions";
+import {calendarActions} from "../redux/Calendar/slice";
 
 const actions = {
     ...authActions,
     ...EventsSliceActions,
+    ...calendarActions,
     fetchUsers,
     login,
     setEvent,

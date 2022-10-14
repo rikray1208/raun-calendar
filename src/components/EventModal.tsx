@@ -8,37 +8,39 @@ import {useActions, useAppSelector} from "../hooks/reduxHooks";
 interface ModalProps {
     isModalOpen: boolean,
     setIsModalOpen: (param: boolean) => void,
-    event: IEvent | null
+    selectedEventID: string
 }
 
 const { Title, Text } = Typography;
 
-const EventModal: FC<ModalProps> = ({isModalOpen, setIsModalOpen, event}) => {
+const EventModal: FC<ModalProps> = ({isModalOpen, setIsModalOpen, selectedEventID}) => {
     const {changeStatusEvent, deleteEvent} = useActions();
-    const {isLoading} = useAppSelector((state) => state.Events)
+    const event = useAppSelector((state) => state.Events.events.find(el => el.id === selectedEventID));
+    const {isLoading} = useAppSelector((state) => state.Events);
 
-    function onComplete(event: IEvent | null) {
+
+    function onComplete(event: IEvent | undefined) {
         if(event) {
-            changeStatusEvent({...event, status: EStatus.SUCCESS})
+            changeStatusEvent({...event, status: EStatus.SUCCESS});
         }
     }
 
-    function onCansel(event: IEvent | null) {
+    function onCansel(event: IEvent | undefined) {
         if(event) {
-            changeStatusEvent({...event, status: EStatus.CANSEL})
+            changeStatusEvent({...event, status: EStatus.CANSEL});
         }
     }
 
-    function onDelete(event: IEvent | null) {
+    async function onDelete(event: IEvent | undefined) {
         if(event) {
-            deleteEvent(event)
+            await deleteEvent(event);
+            setIsModalOpen(false)
         }
     }
-
 
     return (
         <>
-            <Modal title={event?.date} open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
+            <Modal forceRender title={event?.date} open={isModalOpen} onCancel={() => !isLoading.events && setIsModalOpen(false)} footer={null}>
                 <Title level={5}> Создатель: <Text keyboard>{event?.author}</Text></Title>
                 <Title level={5}>Гость: <Text keyboard>{event?.guest}</Text></Title>
                 <Title level={5}>Описание: <Text keyboard>{event?.description}</Text></Title>

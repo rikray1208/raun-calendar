@@ -8,18 +8,22 @@ import moment, {Moment} from "moment";
 interface FormProps {
     guests: IUser[],
     submit: (event: IEvent) => void,
-    isLoading: boolean
+    isLoading: boolean,
+    formState: boolean
 }
 
-const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
+const EventsForm: FC<FormProps> = ({guests, submit, isLoading, formState}) => {
+    const [form] = Form.useForm();
     const [event, setEvent] = useState<IEvent>({
         author: '',
         date: '',
         description: '',
         guest: '',
-        status: EStatus.PROCESSING
+        status: EStatus.PROCESSING,
+        id: '0'
     });
     const {user} = useAppSelector((state) => state.Auth);
+    const {selectedDate} = useAppSelector((state) => state.Calendar);
 
     useEffect(() => {
         setEvent({...event, author: user.username })
@@ -30,16 +34,21 @@ const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
     }
 
     function submitForm() {
-        submit(event)
+        submit({...event, date: selectedDate.format('L')})
     }
 
     function disabledDate(date: Moment) {
         return date.format('L') < moment().format('L')
     }
 
+    useEffect(() => {
+        form.resetFields();
+    }, [formState]);
+
+
     return (
         <Form
-            name="basic"
+            form={form}
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 12 }}
             initialValues={{ remember: true }}
@@ -58,8 +67,10 @@ const EventsForm: FC<FormProps> = ({guests, submit, isLoading}) => {
                 label="Дата"
                 name="data"
                 rules={[{ required: true, message: 'Выберете дату!' }]}
+                initialValue={moment(selectedDate)}
             >
                 <DatePicker disabledDate={disabledDate} onChange={selectDate}/>
+
             </Form.Item>
 
             <Form.Item
